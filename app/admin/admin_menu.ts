@@ -13,7 +13,7 @@ export const Items = [
     },
     {
         title: "Admin Data",
-        url: "#",
+        url: "/admin/admins",
         icon: User
     },
     {

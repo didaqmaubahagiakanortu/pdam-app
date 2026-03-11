@@ -1,6 +1,6 @@
 "use client"
 
-import { Services } from "@/app/types"
+import { Admin } from "@/app/types"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Field, FieldGroup } from "@/components/ui/field"
@@ -10,20 +10,15 @@ import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
 import { toast } from "sonner"
 
-const EditService = ({ selectedData }: { selectedData: Services }) => {
+const ResetPasswordCustomer = ({ selectedData }: { selectedData: Admin }) => {
     const router = useRouter()
 
     const [open, setOpen] = useState<boolean>(false)
-    const [name, setName] = useState<string>("")
-    const [min_usage, setMinUsage] = useState<number>(0)
-    const [max_usage, setMaxUsage] = useState<number>(0)
-    const [price, setPrice] = useState<number>(0)
+    const [password, setPassword] = useState<string>("")
 
     const openModal = () => {
-        setName(selectedData.name)
-        setMinUsage(selectedData.min_usage)
-        setMaxUsage(selectedData.max_usage)
-        setPrice(selectedData.price)
+        setOpen(true)
+        setPassword(selectedData.user.password)
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -31,8 +26,8 @@ const EditService = ({ selectedData }: { selectedData: Services }) => {
             e.preventDefault()
 
             const token = await getCookie("accessToken")
-            const url = `${process.env.NEXT_PUBLIC_BASE_API_URL}/services/${selectedData.id}`
-            const payload = JSON.stringify({ name, min_usage, max_usage, price })
+            const url = `${process.env.NEXT_PUBLIC_BASE_API_URL}/admins/${selectedData.id}`
+            const payload = JSON.stringify({ password })
 
             const response = await fetch(url, {
                 method: "PATCH",
@@ -61,32 +56,20 @@ const EditService = ({ selectedData }: { selectedData: Services }) => {
         <div>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button onClick={openModal} variant="secondary">Edit</Button>
+                    <Button onClick={openModal} variant="secondary">Reset Password</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <form onSubmit={handleSubmit}>
                         <DialogHeader>
-                            <DialogTitle>Edit Service Data</DialogTitle>
+                            <DialogTitle>Reset Customer Password</DialogTitle>
                             <DialogDescription>
-                                Make changes to your service here. Click Save when you're done.
+                                Make changes to your customer password here. Click Save when you're done.
                             </DialogDescription>
                         </DialogHeader>
                         <FieldGroup>
                             <Field>
-                                <label htmlFor="name">Name</label>
-                                <Input id="name" name="name" type="text" placeholder="Service Name" value={name} onChange={(e) => setName(e.target.value)} />
-                            </Field>
-                            <Field>
-                                <label htmlFor="price">Price</label>
-                                <Input id="price" name="price" type="number" placeholder="0" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
-                            </Field>
-                            <Field>
-                                <label htmlFor="min_usage">Minimum Usage</label>
-                                <Input id="min_usage" name="min_usage" type="number" placeholder="0" value={min_usage} onChange={(e) => setMinUsage(Number(e.target.value))} />
-                            </Field>
-                            <Field>
-                                <label htmlFor="max_usage">Maximum Usage</label>
-                                <Input id="max_usage" name="max_usage" type="number" placeholder="0" value={max_usage} onChange={(e) => setMaxUsage(Number(e.target.value))} />
+                                <label htmlFor="password">Password</label>
+                                <Input id="password" name="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                             </Field>
                             <DialogFooter>
                                 <DialogClose asChild>
@@ -102,4 +85,4 @@ const EditService = ({ selectedData }: { selectedData: Services }) => {
     )
 }
 
-export default EditService
+export default ResetPasswordCustomer

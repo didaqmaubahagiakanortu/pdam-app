@@ -1,7 +1,10 @@
 import { Services } from "@/app/types"
 import { getCookies } from "@/lib/server-cookies"
 import AddService from "./add"
+import DeleteService from "./delete"
 import Search from "@/components/Search"
+import Pagination from "@/components/Pagination"
+import EditService from "./edit"
 
 type ResultData = {
     success: boolean
@@ -65,21 +68,16 @@ type Props = {
 export default async function ServicesPage(prop: Props) {
 
     const page = (await prop.searchParams)?.page || 1
-    const quantity = (await prop.searchParams)?.quantity || 5
+    const quantity = (await prop.searchParams)?.quantity || 1
     const search = (await prop.searchParams)?.search || ""
     const { count: counts, data: services } = await getServices(page, quantity, search)
 
     return (
         <div className="flex flex-col min-w-screen h-full p-5 bg-blue-50">
             <div className="bg-white p-5">
-                <h1 className="font-bold text-blue-800 text-xl">Service Data</h1>
-                <div className="flex justify-between items-center m-4">
-                    <div className="flex items-center w-full max-w-md grow">
-                        <Search search={search ?? ``} />
-                    </div>
-                    <div className="ml-4">
-                        <AddService/>
-                    </div>
+                <h1 className="font-bold text-blue-800 text-2xl mb-8">Service Data</h1>
+                <div className="flex items-center w-full max-w-md grow">
+                    <Search search={search ?? ``} />
                 </div>
                 {
                     services.length == 0 ? "Data service tidak ada" :
@@ -90,10 +88,18 @@ export default async function ServicesPage(prop: Props) {
                                     <p>Harga: Rp{service.price},-</p>
                                     <p>Layanan</p>
                                     <p>{service.min_usage} - {service.max_usage}</p>
+                                    <div className="flex mt-4 gap-2">
+                                        <EditService selectedData={service} />
+                                        <DeleteService selectedData={service} />
+                                    </div>
                                 </div>
                             ))}
                         </div>
                 }
+                <div>
+                    <AddService />
+                </div>
+                <Pagination count={counts} perPage={quantity} currentPage={page} />
             </div>
         </div>
     )

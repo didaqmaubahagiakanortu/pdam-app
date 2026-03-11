@@ -1,5 +1,6 @@
 "use client"
 
+import { Services } from "@/app/types"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Field, FieldGroup } from "@/components/ui/field"
@@ -9,20 +10,21 @@ import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
 import { toast } from "sonner"
 
-const AddService = () => {
+const AddAdmin = () => {
     const router = useRouter()
 
-    const [isShow, setIsShow] = useState<boolean>(false)
+    const [open, setOpen] = useState<boolean>(false)
+    const [username, setUsername] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
     const [name, setName] = useState<string>("")
-    const [min_usage, setMinUsage] = useState<number>(0)
-    const [max_usage, setMaxUsage] = useState<number>(0)
-    const [price, setPrice] = useState<number>(0)
+    const [phone, setPhone] = useState<string>("")
 
     const openModal = () => {
+        setOpen(true)
+        setUsername("")
+        setPassword("")
         setName("")
-        setMinUsage(0)
-        setMaxUsage(0)
-        setPrice(0)
+        setPhone("")
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -30,8 +32,8 @@ const AddService = () => {
             e.preventDefault()
 
             const token = await getCookie("accessToken")
-            const url = `${process.env.NEXT_PUBLIC_BASE_API_URL}/services`
-            const payload = JSON.stringify({ name, min_usage, max_usage, price })
+            const url = `${process.env.NEXT_PUBLIC_BASE_API_URL}/admins`
+            const payload = JSON.stringify({ username, password, name, phone})
 
             const response = await fetch(url, {
                 method: "POST",
@@ -45,8 +47,7 @@ const AddService = () => {
 
             const result = await response.json()
             if (result?.success) {
-                setIsShow(false)
-                setIsShow(false)
+                setOpen(false)
                 toast.success(result?.message)
                 setTimeout(() => router.refresh(), 1000)
             } else {
@@ -59,34 +60,34 @@ const AddService = () => {
 
     return (
         <div>
-            <Dialog open={isShow} onOpenChange={setIsShow}>
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button onClick={openModal} variant="default">Add Service Data</Button>
+                    <Button onClick={openModal} variant="default">Add Admin Data</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <form onSubmit={handleSubmit}>
                         <DialogHeader>
-                            <DialogTitle>Add Service Data</DialogTitle>
+                            <DialogTitle>Add Admin Data</DialogTitle>
                             <DialogDescription>
-                                Make changes to your services in here. Click Save when you're done.
+                                Make changes to admins data in here. Click Save when you're done.
                             </DialogDescription>
                         </DialogHeader>
                         <FieldGroup>
                             <Field>
-                                <label htmlFor="name">Name</label>
-                                <Input id="name" name="name" type="text" placeholder="Service Name" value={name} onChange={(e) => setName(e.target.value)} />
+                                <label htmlFor="username">Username</label>
+                                <Input id="username" name="username" type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
                             </Field>
                             <Field>
-                                <label htmlFor="price">Price</label>
-                                <Input id="price" name="price" type="number" placeholder="0" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+                                <label htmlFor="password">Password</label>
+                                <Input id="password" name="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                             </Field>
                             <Field>
-                                <label htmlFor="min_usage">Minimum Usage</label>
-                                <Input id="min_usage" name="min_usage" type="number" placeholder="0" value={min_usage} onChange={(e) => setMinUsage(Number(e.target.value))} />
+                                <label htmlFor="name">Nama</label>
+                                <Input id="name" name="name" type="text" placeholder="Nama" value={name} onChange={(e) => setName(e.target.value)} />
                             </Field>
                             <Field>
-                                <label htmlFor="max_usage">Maximum Usage</label>
-                                <Input id="max_usage" name="max_usage" type="number" placeholder="0" value={max_usage} onChange={(e) => setMaxUsage(Number(e.target.value))} />
+                                <label htmlFor="phone">No. Telepon</label>
+                                <Input id="phone" name="phone" type="text" placeholder="No. Telepon" value={phone} onChange={(e) => setPhone(e.target.value)} />
                             </Field>
                         </FieldGroup>
                         <DialogFooter>
@@ -98,8 +99,8 @@ const AddService = () => {
                     </form>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     )
 }
 
-export default AddService
+export default AddAdmin
