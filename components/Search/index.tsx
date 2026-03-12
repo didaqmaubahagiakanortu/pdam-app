@@ -18,14 +18,14 @@ const Search = ({ search }: Props) => {
                 params.set("search", keyword)
             } else {
                 params.delete("search")
-                router.push(`?${params.toString()}`)
             }
+            router.push(`?${params.toString()}`)
         }
     }
 
     return (
         <div className="w-full">
-            <input id="keyword" type="text" value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="Keyword of search" onKeyDown={event => handleSearch(event)} className="w-full border border-primary rounded-md p-2 bg-white text-black"/>
+            <input id="keyword" type="text" value={keyword} onChange={e => setKeyword(e.target.value)} placeholder="Keyword of search" onKeyUp={event => handleSearch(event)} className="w-full border border-primary rounded-md p-2 bg-white text-black"/>
         </div>
     )
 }
